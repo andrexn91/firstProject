@@ -119,32 +119,37 @@
 <script src="dist/js/adminlte.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const prenotazioni = [
-        {id: 1, nome: 'Mario Rossi', data: '2024-07-01', ora: '10:00', campo: 'Campo 1'},
-        {id: 2, nome: 'Luigi Verdi', data: '2024-07-02', ora: '12:00', campo: 'Campo 2'},
-        // Altre prenotazioni
-    ];
-
-    const prenotazioniList = document.getElementById('prenotazioni-list');
-    prenotazioni.forEach(prenotazione => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${prenotazione.id}</td>
-            <td>${prenotazione.nome}</td>
-            <td>${prenotazione.data}</td>
-            <td>${prenotazione.ora}</td>
-            <td>${prenotazione.campo}</td>
-            <td>
-                <button class="btn btn-sm btn-danger" onclick="eliminaPrenotazione(${prenotazione.id})">Elimina</button>
-            </td>
-        `;
-        prenotazioniList.appendChild(row);
-    });
+    fetch('/api/prenotazioni')
+        .then(response => response.json())
+        .then(prenotazioni => {
+            const prenotazioniList = document.getElementById('prenotazioni-list');
+            prenotazioni.forEach(prenotazione => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${prenotazione.id}</td>
+                    <td>${prenotazione.nome}</td>
+                    <td>${prenotazione.data}</td>
+                    <td>${prenotazione.ora}</td>
+                    <td>${prenotazione.campo}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="eliminaPrenotazione(${prenotazione.id})">Elimina</button>
+                    </td>
+                `;
+                prenotazioniList.appendChild(row);
+            });
+        });
 });
 
 function eliminaPrenotazione(id) {
-    alert('Prenotazione con ID ' + id + ' eliminata!');
+    fetch(`/api/prenotazioni/${id}`, {
+        method: 'DELETE'
+    })
+    .then(() => {
+        alert('Prenotazione eliminata!');
+        location.reload(); // Ricarica la pagina per aggiornare la lista
+    });
 }
+
 </script>
 </body>
 </html>
